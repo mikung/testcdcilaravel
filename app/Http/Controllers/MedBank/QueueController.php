@@ -10,7 +10,7 @@ class QueueController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Notification::with(['appointment.patient'])
+        $query = Notification::with(['appointment.patient', 'appointment.queues'])
             ->orderByDesc('notifiedAt');
 
         if ($request->filled('status')) {
@@ -25,15 +25,15 @@ class QueueController extends Controller
             });
         }
 
-        $notifications = $query->paginate(20);
+        $notifications = $query->get();
 
         return response()->json([
-            'data' => $notifications->getCollection()->map(fn($n) => [
+            'data' => $notifications->map(fn($n) => [
                 'id'              => $n->id,
                 'hn'              => $n->appointment->patient->hn,
                 'vn'              => $n->appointment->vn,
                 'patientName'     => $n->appointment->patient->name,
-                'status'          => $n->status,
+                'notifyStatus'    => $n->status,
                 'deliveryMethod'  => $n->deliveryMethod,
                 'deliveryAddress' => $n->deliveryAddress,
                 'deliveryPhone'   => $n->deliveryPhone,
@@ -41,13 +41,19 @@ class QueueController extends Controller
                 'processedAt'     => $n->processedAt?->toDateTimeString(),
                 'dispatchedAt'    => $n->dispatchedAt?->toDateTimeString(),
                 'completedAt'     => $n->completedAt?->toDateTimeString(),
+                'nextQueue'       => $this->resolveNextQueue($n->appointment),
             ]),
-            'meta' => [
-                'total'       => $notifications->total(),
-                'currentPage' => $notifications->currentPage(),
-                'lastPage'    => $notifications->lastPage(),
-            ],
         ]);
+    }
+
+    private function resolveNextQueue($appointment): ?array
+    {
+        $next = $appointment->queues
+            ->filter(fn($q) => in_array($q->status, ['upcoming', null]) && $q->date)
+            ->sortBy('date')
+            ->first();
+
+        return $next ? ['queueNo' => $next->queueNo, 'date' => $next->date->format('Y-m-d')] : null;
     }
 
     public function updateStatus(Request $request, int $id)
@@ -77,9 +83,9 @@ class QueueController extends Controller
         ][$data['status']];
 
         $notification->update([
-            'status'         => $data['status'],
-            $timestampField  => now(),
-            'pharmacistId'   => $request->user()->id,
+            'status'        => $data['status'],
+            $timestampField => now(),
+            'pharmacistId'  => $request->user()->id,
         ]);
 
         return response()->json(['message' => 'Status updated', 'status' => $notification->status]);

@@ -30,7 +30,7 @@ class PatientController extends Controller
             'patientName'     => $appointment->patient->name,
             'clinic'          => $appointment->clinic,
             'doctor'          => $appointment->doctor,
-            'visitDate'       => $appointment->visitDate?->format('d M Y'),
+            'visitDate'       => $appointment->visitDate?->format('Y-m-d'),
             'notifyStatus'    => $n?->status,
             'deliveryMethod'  => $n?->deliveryMethod,
             'deliveryAddress' => $n?->deliveryAddress,
