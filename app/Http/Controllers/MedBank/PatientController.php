@@ -50,7 +50,7 @@ class PatientController extends Controller
             ]),
             'nextQueue' => $nextQueue ? [
                 'queueNo' => $nextQueue->queueNo,
-                'date'    => $nextQueue->date?->format('d M Y'),
+                'date'    => $nextQueue->date?->format('Y-m-d'),
                 'status'  => $nextQueue->status,
             ] : null,
         ]);
