@@ -4,13 +4,21 @@ namespace App\Http\Controllers\MedBank;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedBank\Appointment;
+use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    public function show(string $vn)
+    public function show(Request $request, string $vn)
     {
+        $hn = $request->query('hn');
+
+        if (!$hn) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
         $appointment = Appointment::with(['patient', 'queues', 'notification'])
             ->where('vn', $vn)
+            ->whereHas('patient', fn($q) => $q->where('hn', $hn))
             ->first();
 
         if (!$appointment) {
@@ -37,7 +45,7 @@ class PatientController extends Controller
             'deliveryPhone'   => $n?->deliveryPhone,
             'queues'          => $appointment->queues->map(fn($q) => [
                 'queueNo' => $q->queueNo,
-                'date'    => $q->date?->format('d M Y'),
+                'date'    => $q->date?->format('Y-m-d'),
                 'status'  => $q->status,
             ]),
             'nextQueue' => $nextQueue ? [
