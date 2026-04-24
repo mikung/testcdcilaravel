@@ -1,66 +1,219 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# คู่มือการติดตั้งและรันโปรเจกต์ Laravel API ด้วย Docker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> คู่มือนี้เขียนสำหรับผู้เริ่มต้น อ่านทีละขั้นตอนและทำตามได้เลย
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## สิ่งที่ต้องติดตั้งก่อน
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| โปรแกรม | ดาวน์โหลดจาก | วิธีเช็คว่ามีแล้ว |
+|---|---|---|
+| **Docker Desktop** | https://www.docker.com/products/docker-desktop | เปิดโปรแกรม Docker Desktop ขึ้นมาได้ |
+| **Git** | https://git-scm.com/downloads | พิมพ์ `git --version` ใน Terminal |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> **หมายเหตุ:** ไม่ต้องติดตั้ง PHP หรือ MySQL บนเครื่องเอง Docker จัดการให้ทั้งหมด
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ขั้นตอนการติดตั้ง (ทำครั้งแรกครั้งเดียว)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### ขั้นที่ 1 — ดาวน์โหลดโค้ด
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+เปิด Terminal (หรือ Command Prompt) แล้วพิมพ์:
 
-## Laravel Sponsors
+```bash
+git clone <URL ของ repository>
+cd laravel-api
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+> แทนที่ `<URL ของ repository>` ด้วย URL จริงที่ได้รับมา
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### ขั้นที่ 2 — สร้างไฟล์ตั้งค่า
 
-## Contributing
+โปรเจกต์ต้องมีไฟล์ชื่อ `.env` สำหรับเก็บค่าต่าง ๆ เช่น รหัสผ่านฐานข้อมูล
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+```
 
-## Code of Conduct
+> คำสั่งนี้แค่ copy ไฟล์ตัวอย่างมาใช้ ยังไม่ต้องแก้ไขอะไร
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### ขั้นที่ 3 — เปิด Docker Desktop
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. เปิดโปรแกรม **Docker Desktop** บนเครื่อง
+2. รอจนไอคอน Docker ด้านล่างขวาของจอ **ไม่มีวงกลมหมุน** (แสดงว่า Docker พร้อมใช้งาน)
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### ขั้นที่ 4 — Build และรันโปรเจกต์
+
+```bash
+docker compose up -d --build
+```
+
+คำสั่งนี้จะ:
+- ดาวน์โหลด PHP, Nginx, MySQL ให้อัตโนมัติ
+- ติดตั้ง package ของโปรเจกต์
+- รันทุกอย่างอยู่เบื้องหลัง
+
+> ครั้งแรกอาจใช้เวลา **5-15 นาที** ขึ้นอยู่กับความเร็วอินเทอร์เน็ต
+
+---
+
+### ขั้นที่ 5 — สร้าง APP KEY
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+> ทำแค่ครั้งแรกครั้งเดียว เป็นการสร้างรหัสลับสำหรับโปรแกรม
+
+---
+
+### ขั้นที่ 6 — สร้างตารางฐานข้อมูล
+
+```bash
+docker compose exec app php artisan migrate
+```
+
+> คำสั่งนี้สร้างตารางในฐานข้อมูลให้ครบ
+
+---
+
+### ขั้นที่ 7 — ทดสอบว่าใช้งานได้
+
+เปิด Browser แล้วไปที่:
+
+```
+http://localhost:8080
+```
+
+ถ้าเห็นหน้า Laravel แสดงว่า **ติดตั้งสำเร็จ!**
+
+---
+
+## การรันโปรเจกต์ (ครั้งต่อไป)
+
+ครั้งต่อไปทำแค่ 2 ขั้นตอน:
+
+```bash
+# 1. เปิด Docker Desktop ก่อน (รอให้พร้อม)
+
+# 2. รันโปรเจกต์
+docker compose up -d
+```
+
+---
+
+## การหยุดโปรเจกต์
+
+```bash
+docker compose down
+```
+
+> ข้อมูลในฐานข้อมูลจะยังอยู่ครบ ไม่หายไปไหน
+
+---
+
+## คำสั่งที่ใช้บ่อย
+
+| ต้องการทำอะไร | คำสั่ง |
+|---|---|
+| เริ่มรันโปรเจกต์ | `docker compose up -d` |
+| หยุดโปรเจกต์ | `docker compose down` |
+| ดู log ของโปรเจกต์ | `docker compose logs -f` |
+| รัน migration ใหม่ | `docker compose exec app php artisan migrate` |
+| เข้าไปใน container | `docker compose exec app bash` |
+| ดูสถานะ container | `docker compose ps` |
+
+---
+
+## โครงสร้างที่รันอยู่
+
+```
+Browser (http://localhost:8080)
+        |
+        v
+  [ Nginx :80 ]        <-- รับ request จาก Browser
+        |
+        v
+  [ PHP-FPM :9000 ]    <-- ประมวลผล Laravel
+        |
+        v
+  [ MySQL :3306 ]      <-- เก็บข้อมูล
+```
+
+---
+
+## แก้ปัญหาที่พบบ่อย
+
+### ปัญหา: Docker ดาวน์โหลด image ไม่ได้ (timeout)
+
+เกิดจากเน็ตเชื่อมต่อ Docker Hub ไม่ได้ แก้ได้ 2 วิธี:
+
+**วิธีที่ 1 — ตั้ง Mirror (แนะนำ)**
+
+1. เปิด Docker Desktop
+2. ไปที่ **Settings** (ไอคอนฟันเฟือง)
+3. เลือก **Docker Engine**
+4. แก้ไข JSON เพิ่ม registry-mirrors:
+
+```json
+{
+  "registry-mirrors": [
+    "https://mirror.gcr.io"
+  ]
+}
+```
+
+5. กด **Apply & Restart**
+6. รัน `docker compose up -d --build` ใหม่
+
+**วิธีที่ 2 — เปิด VPN แล้วลองใหม่**
+
+---
+
+### ปัญหา: port 8080 ถูกใช้งานอยู่แล้ว
+
+แก้ไขไฟล์ `docker-compose.yml` บรรทัด:
+```yaml
+ports:
+  - "8080:80"
+```
+เปลี่ยน `8080` เป็นเลขอื่น เช่น `8090:80` แล้วรันใหม่
+
+---
+
+### ปัญหา: หน้าเว็บขึ้น error หลัง migrate
+
+```bash
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan cache:clear
+```
+
+---
+
+### ปัญหา: ต้องการล้างทุกอย่างแล้วเริ่มใหม่
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+> `-v` จะลบข้อมูลในฐานข้อมูลด้วย ระวังถ้ามีข้อมูลสำคัญ
+
+---
+
+## ข้อมูลการเชื่อมต่อฐานข้อมูล (สำหรับโปรแกรม Database Client)
+
+| | ค่า |
+|---|---|
+| Host | `localhost` |
+| Port | `3306` |
+| Database | `laravel_db` |
+| Username | `laravel_user` |
+| Password | `secret` |

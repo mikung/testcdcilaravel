@@ -6,9 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Models\MedBank\Pharmacist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class PharmacistAuthController extends Controller
 {
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'username' => ['required', 'string', 'max:100', 'unique:mysqlHyggeRBH.medbank_pharmacist,username'],
+            'name'     => ['required', 'string', 'max:255'],
+            'password' => ['required', Password::min(8)],
+        ]);
+
+        Pharmacist::create([
+            'username'     => $data['username'],
+            'name'         => $data['name'],
+            'passwordHash' => Hash::make($data['password']),
+            'role'         => 'pharmacist',
+            'status'       => 'pending',
+        ]);
+
+        return response()->json(['message' => 'Registration submitted, awaiting approval'], 201);
+    }
+
     public function login(Request $request)
     {
         $data = $request->validate([
