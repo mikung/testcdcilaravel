@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MedBank;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedBank\Pharmacist;
+use Illuminate\Http\Request;
 
 class PharmacistAccountController extends Controller
 {
@@ -23,10 +24,17 @@ class PharmacistAccountController extends Controller
         ]);
     }
 
-    public function approve(int $id)
+    public function approve(Request $request, int $id)
     {
+        $data = $request->validate([
+            'role' => ['sometimes', 'string', 'in:pharmacist,staff'],
+        ]);
+
         $account = Pharmacist::where('status', 'pending')->findOrFail($id);
-        $account->update(['status' => 'active']);
+        $account->update([
+            'status' => 'active',
+            'role'   => $data['role'] ?? $account->role,
+        ]);
 
         return response()->json(['message' => 'Account approved']);
     }

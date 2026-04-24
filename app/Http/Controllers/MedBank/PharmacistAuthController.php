@@ -16,13 +16,14 @@ class PharmacistAuthController extends Controller
             'username' => ['required', 'string', 'max:100', 'unique:mysqlHyggeRBH.medbank_pharmacist,username'],
             'name'     => ['required', 'string', 'max:255'],
             'password' => ['required', Password::min(8)],
+            'role'     => ['sometimes', 'string', 'in:pharmacist,staff'],
         ]);
 
         Pharmacist::create([
             'username'     => $data['username'],
             'name'         => $data['name'],
             'passwordHash' => Hash::make($data['password']),
-            'role'         => 'pharmacist',
+            'role'         => $data['role'] ?? 'pharmacist',
             'status'       => 'pending',
         ]);
 

@@ -22,6 +22,7 @@ Route::prefix('medbank')->group(function () {
     // Pharmacist protected routes
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [PharmacistAuthController::class, 'logout']);
+        Route::get('/patients/search', [PatientController::class, 'search']);
         Route::get('/queue', [QueueController::class, 'index']);
         Route::patch('/queue/{id}/status', [QueueController::class, 'updateStatus']);
         Route::post('/import', [ImportController::class, 'store']);

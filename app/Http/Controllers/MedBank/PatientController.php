@@ -4,10 +4,55 @@ namespace App\Http\Controllers\MedBank;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedBank\Appointment;
+use App\Models\MedBank\Patient;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
+    public function search(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $patients = Patient::where('hn', 'like', $q . '%')
+            ->orWhere('name', 'like', '%' . $q . '%')
+            ->with(['appointments' => function ($query) {
+                $query->with(['queues', 'notification'])
+                      ->orderByDesc('visitDate');
+            }])
+            ->limit(20)
+            ->get()
+            ->map(function ($patient) {
+                return [
+                    'hn'           => $patient->hn,
+                    'patientName'  => $patient->name,
+                    'appointments' => $patient->appointments->map(function ($appt) {
+                        $nextQueue = $appt->queues
+                            ->filter(fn($q) => in_array($q->status, ['upcoming', null]) && $q->date)
+                            ->sortBy('date')
+                            ->first();
+
+                        return [
+                            'vn'           => $appt->vn,
+                            'visitDate'    => $appt->visitDate?->format('Y-m-d'),
+                            'clinic'       => $appt->clinic,
+                            'doctor'       => $appt->doctor,
+                            'notifyStatus' => $appt->notification?->status,
+                            'nextQueue'    => $nextQueue ? [
+                                'queueNo' => $nextQueue->queueNo,
+                                'date'    => $nextQueue->date?->format('Y-m-d'),
+                            ] : null,
+                        ];
+                    }),
+                ];
+            });
+
+        return response()->json($patients);
+    }
+
     public function show(Request $request, string $vn)
     {
         $hn = $request->query('hn');
