@@ -70,9 +70,18 @@ class PatientController extends Controller
             return response()->json(['message' => 'Not found'], 404);
         }
 
+        // Settle stale queues: upcoming but outside notify window (>7 days past) → missed
+        $appointment->queues()
+            ->where('status', 'upcoming')
+            ->whereDate('date', '<', today()->subDays(7))
+            ->update(['status' => 'missed']);
+
+        $appointment->load('queues');
+
+        $today = today();
         $nextQueue = $appointment->queues
-            ->filter(fn($q) => in_array($q->status, ['upcoming', null]) && $q->date)
-            ->sortBy('date')
+            ->filter(fn($q) => in_array($q->status, ['upcoming', 'missed', null]) && $q->date)
+            ->sortBy(fn($q) => $q->date->diffInDays($today))
             ->first();
 
         $n = $appointment->notification;

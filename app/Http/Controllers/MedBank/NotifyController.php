@@ -25,9 +25,10 @@ class NotifyController extends Controller
             return response()->json(['message' => 'VN not found'], 404);
         }
 
+        $today = today();
         $nextQueue = $appointment->queues
-            ->filter(fn($q) => in_array($q->status, ['upcoming', null]) && $q->date)
-            ->sortBy('date')
+            ->filter(fn($q) => in_array($q->status, ['upcoming', 'missed', null]) && $q->date)
+            ->sortBy(fn($q) => $q->date->diffInDays($today))
             ->first();
 
         if (!$nextQueue) {

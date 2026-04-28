@@ -49,9 +49,10 @@ class QueueController extends Controller
 
     private function resolveNextQueue($appointment): ?array
     {
+        $today = today();
         $next = $appointment->queues
-            ->filter(fn($q) => in_array($q->status, ['upcoming', null]) && $q->date)
-            ->sortBy('date')
+            ->filter(fn($q) => in_array($q->status, ['upcoming', 'missed', null]) && $q->date)
+            ->sortBy(fn($q) => $q->date->diffInDays($today))
             ->first();
 
         return $next ? ['queueNo' => $next->queueNo, 'date' => $next->date->format('Y-m-d')] : null;
