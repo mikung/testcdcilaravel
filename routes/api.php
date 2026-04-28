@@ -24,7 +24,9 @@ Route::prefix('medbank')->group(function () {
         Route::post('/auth/logout', [PharmacistAuthController::class, 'logout']);
         Route::get('/patients/search', [PatientController::class, 'search']);
         Route::get('/queue', [QueueController::class, 'index']);
+        Route::get('/appointments/missed', [QueueController::class, 'missed']);
         Route::patch('/queue/{id}/status', [QueueController::class, 'updateStatus']);
+        Route::patch('/queues/{id}/status', [QueueController::class, 'updateQueueStatus']);
         Route::post('/import', [ImportController::class, 'store']);
 
         // Admin only

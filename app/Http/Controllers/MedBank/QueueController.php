@@ -58,6 +58,48 @@ class QueueController extends Controller
         return $next ? ['queueNo' => $next->queueNo, 'date' => $next->date->format('Y-m-d')] : null;
     }
 
+    public function missed(Request $request)
+    {
+        $request->validate([
+            'month' => ['required', 'date_format:Y-m'],
+        ]);
+
+        [$year, $month] = explode('-', $request->month);
+
+        $queues = Queue::with(['appointment.patient', 'appointment.notification'])
+            ->where('status', 'missed')
+            ->whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->orderBy('date')
+            ->get();
+
+        return response()->json([
+            'data' => $queues->map(fn($q) => [
+                'queueId'     => $q->id,
+                'hn'          => $q->appointment->patient->hn,
+                'vn'          => $q->appointment->vn,
+                'patientName' => $q->appointment->patient->name,
+                'department'  => $q->appointment->doctor,
+                'clinic'      => $q->appointment->clinic,
+                'queueNo'     => $q->queueNo,
+                'date'        => $q->date->format('Y-m-d'),
+                'queueStatus' => $q->status,
+            ]),
+        ]);
+    }
+
+    public function updateQueueStatus(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'status' => ['required', 'in:completed'],
+        ]);
+
+        $queue = Queue::findOrFail($id);
+        $queue->update(['status' => $data['status']]);
+
+        return response()->json(['message' => 'Queue status updated', 'status' => $queue->status]);
+    }
+
     public function updateStatus(Request $request, int $id)
     {
         $data = $request->validate([
