@@ -9,7 +9,7 @@ class Patient extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysqlHyggeRBH';
+    protected $connection = 'mysql_projectrbh';
     protected $table = 'medbank_patient';
 
     const CREATED_AT = 'createdAt';

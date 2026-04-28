@@ -6,5 +6,5 @@ use Laravel\Sanctum\PersonalAccessToken as SanctumToken;
 
 class PersonalAccessToken extends SanctumToken
 {
-    protected $connection = 'mysqlHyggeRBH';
+    protected $connection = 'mysql_projectrbh';
 }

@@ -9,7 +9,7 @@ class Queue extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysqlHyggeRBH';
+    protected $connection = 'mysql_projectrbh';
     protected $table = 'medbank_queue';
 
     public $timestamps = false;

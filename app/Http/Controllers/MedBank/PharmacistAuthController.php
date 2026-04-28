@@ -13,7 +13,7 @@ class PharmacistAuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'username' => ['required', 'string', 'max:100', 'unique:mysqlHyggeRBH.medbank_pharmacist,username'],
+            'username' => ['required', 'string', 'max:100', 'unique:mysql_projectrbh.medbank_pharmacist,username'],
             'name'     => ['required', 'string', 'max:255'],
             'password' => ['required', Password::min(8)],
             'role'     => ['sometimes', 'string', 'in:pharmacist,staff'],

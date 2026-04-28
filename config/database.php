@@ -91,13 +91,13 @@ return [
             'prefix_indexes' => true,
         ],
 
-        'mysqlHyggeRBH' => [
+        'mysql_projectrbh' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST_RBH', '127.0.0.1'),
-            'port' => env('DB_PORT_RBH', '3306'),
-            'database' => env('DB_DATABASE_RBH', 'forge'),
-            'username' => env('DB_USERNAME_RBH', 'forge'),
-            'password' => env('DB_PASSWORD_RBH', ''),
+            'host' => env('DB_HOST_PROJECTRBH', '127.0.0.1'),
+            'port' => env('DB_PORT_PROJECTRBH', '3306'),
+            'database' => env('DB_DATABASE_PROJECTRBH', 'forge'),
+            'username' => env('DB_USERNAME_PROJECTRBH', 'forge'),
+            'password' => env('DB_PASSWORD_PROJECTRBH', ''),
             'unix_socket' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

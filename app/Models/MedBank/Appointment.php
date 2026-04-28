@@ -9,7 +9,7 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysqlHyggeRBH';
+    protected $connection = 'mysql_projectrbh';
     protected $table = 'medbank_appointment';
 
     const CREATED_AT = 'createdAt';

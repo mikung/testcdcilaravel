@@ -10,7 +10,7 @@ class Pharmacist extends Authenticatable
 {
     use HasApiTokens, HasFactory;
 
-    protected $connection = 'mysqlHyggeRBH';
+    protected $connection = 'mysql_projectrbh';
     protected $table = 'medbank_pharmacist';
 
     const CREATED_AT = 'createdAt';

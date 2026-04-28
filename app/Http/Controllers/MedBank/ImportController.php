@@ -45,7 +45,7 @@ class ImportController extends Controller
         $stats  = ['total' => 0, 'created' => 0, 'updated' => 0, 'errors' => []];
         $today  = now()->toDateString();
 
-        DB::connection('mysqlHyggeRBH')->transaction(function () use ($lines, $today, &$stats) {
+        DB::connection('mysql_projectrbh')->transaction(function () use ($lines, $today, &$stats) {
             foreach ($lines as $idx => $line) {
                 $rowNum = $idx + 2; // 1-based + header
                 $cols   = str_getcsv(trim($line));
