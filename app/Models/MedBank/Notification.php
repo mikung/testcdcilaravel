@@ -16,6 +16,7 @@ class Notification extends Model
 
     protected $fillable = [
         'appointmentId',
+        'queueNo',
         'status',
         'deliveryMethod',
         'deliveryAddress',

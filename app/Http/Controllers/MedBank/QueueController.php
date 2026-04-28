@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MedBank;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedBank\Notification;
+use App\Models\MedBank\Queue;
 use Illuminate\Http\Request;
 
 class QueueController extends Controller
@@ -87,6 +88,12 @@ class QueueController extends Controller
             $timestampField => now(),
             'pharmacistId'  => $request->user()->id,
         ]);
+
+        if ($data['status'] === 'completed' && $notification->queueNo) {
+            Queue::where('appointmentId', $notification->appointmentId)
+                ->where('queueNo', $notification->queueNo)
+                ->update(['status' => 'completed']);
+        }
 
         return response()->json(['message' => 'Status updated', 'status' => $notification->status]);
     }

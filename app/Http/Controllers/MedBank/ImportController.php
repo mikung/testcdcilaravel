@@ -60,7 +60,7 @@ class ImportController extends Controller
                 $name      = trim($cols[4]);
                 $doctor    = trim($cols[5]);
                 $clinic    = trim($cols[6]);
-                $visitDate = $this->parseThaiDate(trim($cols[1]));
+                $visitDate = $this->parseDate(trim($cols[1]));
 
                 if (!$visitDate) {
                     $stats['errors'][] = "Row {$rowNum}: cannot parse visitDate '{$cols[1]}'";
@@ -91,7 +91,7 @@ class ImportController extends Controller
                     $raw = trim($cols[$i]);
                     if ($raw === '' || $raw === '-') continue;
 
-                    $queueDate = $this->parseThaiDate($raw);
+                    $queueDate = $this->parseDate($raw);
                     if (!$queueDate) continue;
 
                     Queue::create([
@@ -110,19 +110,43 @@ class ImportController extends Controller
         return response()->json($stats);
     }
 
-    private function parseThaiDate(string $value): ?string
+    private function parseDate(string $value): ?string
     {
-        // Matches "21 เม.ย. 2569" or "21 เม.ย. 2569 08:15" — time part ignored
-        if (!preg_match('/^(\d{1,2})\s+(\S+)\s+(\d{4})/', $value, $m)) {
-            return null;
-        }
-        $month = self::THAI_MONTHS[$m[2]] ?? null;
-        $year  = (int) $m[3] - 543;
+        // Strip trailing time e.g. "09:00" or "09:00:00"
+        $value = preg_replace('/\s+\d{1,2}:\d{2}(:\d{2})?$/', '', trim($value));
 
-        if (!$month || $year < 1900 || $year > 2200) {
+        // "28 เม.ย. 2569" — Thai abbreviated month, BE or CE year
+        if (preg_match('/^(\d{1,2})\s+(\S+)\s+(\d{4})$/', $value, $m)) {
+            $month = self::THAI_MONTHS[$m[2]] ?? null;
+            if (!$month) return null;
+            $year = (int) $m[3];
+            if ($year > 2400) $year -= 543;
+            return $this->makeDate($year, $month, (int) $m[1]);
+        }
+
+        // "28/04/2569" or "28-04-2569" — DD/MM/YYYY, BE or CE year
+        if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $value, $m)) {
+            $year = (int) $m[3];
+            if ($year > 2400) $year -= 543;
+            return $this->makeDate($year, (int) $m[2], (int) $m[1]);
+        }
+
+        // "2026-04-28" or "2569-04-28" — YYYY-MM-DD, CE or BE year
+        if (preg_match('/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/', $value, $m)) {
+            $year = (int) $m[1];
+            if ($year > 2400) $year -= 543;
+            return $this->makeDate($year, (int) $m[2], (int) $m[3]);
+        }
+
+        return null;
+    }
+
+    private function makeDate(int $year, int $month, int $day): ?string
+    {
+        if ($year < 1900 || $year > 2200 || $month < 1 || $month > 12 || $day < 1 || $day > 31) {
             return null;
         }
-        return sprintf('%04d-%02d-%02d', $year, $month, (int) $m[1]);
+        return sprintf('%04d-%02d-%02d', $year, $month, $day);
     }
 
     private function cleanExcel(string $value): string
