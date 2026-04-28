@@ -13,49 +13,6 @@ components:
       scheme: bearer
       bearerFormat: JWT # หรือ Sanctum token
 
-  schemas:
-    PersonalAccessToken:
-      type: object
-      description: |
-        ตาราง personal_access_tokens (database: projectrbh)
-        ใช้เก็บ Sanctum API token ของเจ้าหน้าที่ (เภสัชกร/staff)
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        tokenable_type:
-          type: string
-          example: "App\\Models\\MedBank\\Pharmacist"
-        tokenable_id:
-          type: integer
-          description: FK → medbank_pharmacist.id
-        name:
-          type: string
-          example: "pharmacist-token"
-        token:
-          type: string
-          description: SHA-256 hash ของ token (ไม่ส่งกลับ client)
-        abilities:
-          type: array
-          items:
-            type: string
-          example: ["*"]
-        last_used_at:
-          type: string
-          format: date-time
-          nullable: true
-        expires_at:
-          type: string
-          format: date-time
-          nullable: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
 security:
   - bearerAuth: []
 
