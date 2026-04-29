@@ -28,6 +28,7 @@ jobs:
           context: .
           push: true
           # เปลี่ยน 'your-username' เป็นชื่อคุณ และ 'your-app-name' เป็นชื่อโปรเจกต์
+          platform: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/your-app-name:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/your-app-name:${{ github.sha }}
